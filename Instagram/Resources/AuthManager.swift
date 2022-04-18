@@ -16,7 +16,6 @@ public class AuthManager {
          - Check if username is available
          - Check if email is available
          */
-        
         DatabaseManager.shared.canCreateNewUser(with: email, username: userName) { canCreate in
             if canCreate {
                 /*
@@ -64,5 +63,18 @@ public class AuthManager {
             // username login
         }
         
+    }
+    
+    /// Logout to Firebase user
+    public func logOut(completion: (Bool) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            completion(true)
+            return
+        } catch {
+            print(error)
+            completion(false)
+            return
+        }
     }
 }
