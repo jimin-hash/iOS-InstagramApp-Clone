@@ -113,6 +113,16 @@ class ResistrationViewController: UIViewController {
         guard let email = emailField.text, !email.isEmpty, let password = passwordField.text, !password.isEmpty, password.count >= 8, let username = userNameField.text, !username.isEmpty else {
             return
         }
+        
+        AuthManager.shared.registerNewUser(userName: username, email: email, password: password) { registered in
+            DispatchQueue.main.async {
+                if registered {
+                    // good to go
+                } else {
+                    // failed
+                }
+            }
+        }
     }
 }
 
