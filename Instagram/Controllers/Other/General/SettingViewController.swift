@@ -59,7 +59,6 @@ final class SettingViewController: UIViewController {
             })
         ])
         
-        
         data.append([
             SettingCellModel(title: "Terms of Services", handler: { [weak self] in
                 self?.openUrl(type: .terms)
@@ -104,6 +103,7 @@ final class SettingViewController: UIViewController {
         vc.title = "Edit Profile"
         
         let navVC = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .fullScreen
         present(navVC, animated: true)
     }
     
