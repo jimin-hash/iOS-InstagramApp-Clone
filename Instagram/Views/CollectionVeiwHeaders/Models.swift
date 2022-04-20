@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+   
 public enum UserPostType {
     case photo, video
 }
@@ -22,7 +22,7 @@ struct User {
     let birthData: Date
     let gender: Gender
     let counts: UserCount
-    let joinDate: Date 
+    let joinDate: Date
 }
 
 struct UserCount {
