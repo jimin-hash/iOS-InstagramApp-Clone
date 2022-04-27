@@ -7,8 +7,19 @@
 
 import UIKit
 
-class NotificationViewController: UIViewController {
+enum UserNotificationType {
+    case like(post: UserPost)
+    case follow(state: FollowState)
+}
 
+struct UserNotification {
+    let type: UserNotificationType
+    let text: String
+    let user: User
+}
+
+final class NotificationViewController: UIViewController {
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = false
@@ -25,11 +36,13 @@ class NotificationViewController: UIViewController {
     }()
     
     private lazy var noNotificationView = NoNotificationView()
+    private var models = [UserNotification]()
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        fetchNotification()
+        
         navigationItem.title = "Notifications"
         view.backgroundColor = .systemBackground
         
@@ -48,6 +61,32 @@ class NotificationViewController: UIViewController {
         spinner.center = view.center
     }
     
+    private func fetchNotification() {
+        for x in 0...100 {
+            let post = UserPost(identifier: "",
+                                postType: .photo,
+                                thumbnailImage: URL(string: "www.google.com")!,
+                                postURL: URL(string: "www.google.com")!,
+                                caption: nil,
+                                likeCount: [],
+                                comments: [],
+                                createDate: Date(),
+                                taggedUsers: [])
+            let model = UserNotification(type: x%2 == 0 ? .like(post: post) : .follow(state: .notFollowing),
+                                         text: "Hello there",
+                                         user: User(username: "Jimin",
+                                                    bio: "",
+                                                    name: (first: "", last: ""),
+                                                    profilePhoto: URL(string: "www.google.com")!,
+                                                    birthData: Date(),
+                                                    gender: .female,
+                                                    counts: UserCount(followers: 100, following: 100, posts: 10),
+                                                    joinDate: Date()))
+            
+            models.append(model)
+        }
+    }
+    
     private func addNoNotificationView() {
         tableView.isHidden = true
         view.addSubview(noNotificationView)
@@ -55,18 +94,46 @@ class NotificationViewController: UIViewController {
         noNotificationView.center = view.center
     }
 }
- 
+
 extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return models.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        return cell
+        let model = models[indexPath.row]
+        
+        switch model.type {
+        case .like(post: _):
+            let cell = tableView.dequeueReusableCell(withIdentifier: NotificationLikeEventTableViewCell.identifier, for: indexPath) as! NotificationLikeEventTableViewCell
+            cell.configure(with: model)
+            cell.delegate = self
+            return cell
+        case .follow:
+            let cell = tableView.dequeueReusableCell(withIdentifier: NotificationFollowEventTableViewCell.identifier, for: indexPath) as! NotificationFollowEventTableViewCell
+            cell.configure(with: model)
+            cell.delegate = self
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 52
+    }
+}
+
+extension NotificationViewController: NotificationLikeEventTableViewCellDelegate {
+    func didTapRelatedPostButton(model: UserNotification) {
+         
+    }
+}
+
+extension NotificationViewController: NotificationFollowEventTableViewCellDelegate {
+    func didTapFollowUnFollowButton(model: UserNotification) {
+         
     }
 }

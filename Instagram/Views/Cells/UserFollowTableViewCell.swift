@@ -12,7 +12,8 @@ protocol UserFollowTableViewCellDelegate: AnyObject {
 }
 
 enum FollowState {
-    case following, notFollowing
+    case following // indicated the current user is follwing the other user
+    case notFollowing // indicated the current user is not following the other user
 }
 
 struct UserReleationShip {
